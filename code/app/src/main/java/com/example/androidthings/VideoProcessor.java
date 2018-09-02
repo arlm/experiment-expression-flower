@@ -67,7 +67,7 @@ public class VideoProcessor implements ImageReader.OnImageAvailableListener {
 
   // This value is 2 ^ 18 - 1, and is used to clamp the RGB values before their ranges
   // are normalized to eight bits.
-  static final int MAX_CHANNEL_VALUE = 262143;
+  private static final int MAX_CHANNEL_VALUE = 262143;
 
   // Max numbers of captured images to be queued before displaying on view.
   private static final int MAX_IMAGES = 20;
@@ -228,7 +228,7 @@ public class VideoProcessor implements ImageReader.OnImageAvailableListener {
         ImageReader.newInstance(IMAGE_WIDTH, IMAGE_HEIGHT, ImageFormat.YUV_420_888, MAX_IMAGES);
     mImageReader.setOnImageAvailableListener(this, backgroundHandler);
     manager.openCamera(
-        camIds[0],
+        camIds[camIds.length - 1],
         new CameraDevice.StateCallback() {
           @Override
           public void onOpened(CameraDevice camera) {

@@ -17,8 +17,10 @@ package com.example.androidthings;
  */
 
 import android.graphics.Color;
+
 import com.google.android.things.contrib.driver.apa102.Apa102;
 import com.google.android.things.contrib.driver.apa102.Apa102.Mode;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -26,7 +28,7 @@ import java.util.Arrays;
 public class FlowerLEDController {
   public static final int LED_COUNT = 26;
   private static final int LED_BRIGHTNESS = 31;
-  private static final Apa102.Mode LED_MODE = Mode.BGR;
+  private static final Mode LED_MODE = Mode.BGR;
   private Apa102 apa102;
   private static final int[] ledArray = new int [LED_COUNT];
   FlowerLEDController() throws IOException {

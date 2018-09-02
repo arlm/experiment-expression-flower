@@ -16,7 +16,10 @@ package com.example.androidthings;
  * limitations under the License.
  */
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -29,8 +32,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
-import com.google.android.things.contrib.driver.pwmservo.Servo;
+
 import com.google.firebase.FirebaseApp;
+
 import java.io.IOException;
 
 /** Expression flower activity that starts the VideoProcessor, motor, and LEDs. */
@@ -42,7 +46,6 @@ public class MainActivity extends Activity {
   private static final String SERVO_PIN = "PWM0";
   private VideoProcessor videoProcessor;
   private FlowerLEDController ledController;
-  private Servo servo;
   private Flower flower;
   private ImageView overlay;
 
@@ -53,26 +56,24 @@ public class MainActivity extends Activity {
     getActionBar().hide();
     FirebaseApp.initializeApp(this);
 
+      if (this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+          if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+
+          } else {
+              this.requestPermissions(
+                      new String[]{Manifest.permission.CAMERA},
+                      1);
+          }
+      }
+
     overlay = findViewById(R.id.overlay);
     createOverlayDisplay();
 
-    try {
-      ledController = new FlowerLEDController();
-    } catch (IOException e) {
-      throw new RuntimeException("Couldn't set up led controller.", e);
-    }
-    try {
-      servo = new Servo(SERVO_PIN);
-      servo.setPulseDurationRange(0.5, 2.5); // According to the DS3218 servo spec.
-      servo.setAngleRange(0, 180); // According to the DS3218 servo spec.
-      servo.setEnabled(true);
-      Log.i(TAG, "Servo set up complete.");
-    } catch (IOException e) {
-      throw new RuntimeException("Couldn't set up servo.", e);
-    }
+    ledController = new FlowerLEDController(this);
+
 
     try {
-      flower = new Flower(servo, ledController);
+      flower = new Flower(ledController);
     } catch (IOException e) {
       throw new RuntimeException("Couldn't set up flower.", e);
     }

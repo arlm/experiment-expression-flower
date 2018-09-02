@@ -17,26 +17,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.androidthings">
 
-  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="com.google.android.things.permission.MANAGE_INPUT_DRIVERS" />
+  <uses-permission android:name="com.google.android.things.permission.USE_PERIPHERAL_IO" />
 
   <application>
-    <meta-data
-        android:name="com.google.firebase.ml.vision.DEPENDENCIES"
-        android:value="face" />
-    <!-- To use multiple models: android:value="face,model2,model3" -->
-
-    <activity android:name="com.example.androidthings.MainActivity">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-
-        <category android:name="android.intent.category.LAUNCHER"/>
-      </intent-filter>
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-        <category android:name="android.intent.category.HOME"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-      </intent-filter>
-    </activity>
-
+    <uses-library android:name="com.google.android.things"/>
   </application>
 </manifest>

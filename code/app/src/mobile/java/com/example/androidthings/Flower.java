@@ -19,11 +19,12 @@ package com.example.androidthings;
 import android.graphics.Color;
 import android.support.annotation.IntDef;
 import android.util.Log;
+
 import com.example.androidthings.sequences.ExpressionSequence;
 import com.example.androidthings.sequences.IdleSequence;
 import com.example.androidthings.sequences.RainbowSequence;
 import com.example.androidthings.sequences.Sequence;
-import com.google.android.things.contrib.driver.pwmservo.Servo;
+
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -38,7 +39,6 @@ public class Flower {
   private static final float PINK_HUE = 314f;
   private static final int DEFAULT_MAX_ANGLE = 50;
 
-  private final Servo motorController;
   private final FlowerLEDController ledController;
 
   private int maxAngle;
@@ -75,8 +75,7 @@ public class Flower {
   private @State int currentState = State.UNDEFINED;
   private @State int underlyingState;
 
-  Flower(Servo motorController, FlowerLEDController ledController) throws IOException {
-    this.motorController = motorController;
+  Flower(FlowerLEDController ledController) throws IOException {
     this.ledController = ledController;
     maxAngle = DEFAULT_MAX_ANGLE;
     setOpening(1f);
@@ -101,13 +100,13 @@ public class Flower {
   }
 
   /** Sets the LEDs of the flower. */
-  public void setLEDs(int[] colors) throws IOException {
+  public void setLEDs(int color) throws IOException {
     float[] hsv = new float[3];
-    Color.colorToHSV(colors[0], hsv);
+    Color.colorToHSV(color, hsv);
     this.hue = hsv[0];
     this.saturation = hsv[1];
     this.brightness = hsv[2];
-    ledController.setFlowerLEDs(colors);
+    ledController.setFlowerLEDs(color);
   }
 
   /** Sets how open the flower's petals are. */
@@ -121,7 +120,6 @@ public class Flower {
       return;
     }
     this.opening = ensureInRange(opening, 0, 1);
-    motorController.setAngle(maxAngle * this.opening);
   }
 
   /** Returns the angle the flower is currently opened to. */
@@ -199,7 +197,7 @@ public class Flower {
   }
 
   /** Determines whether a sequence is completed and switches back to an idle or detecting state. */
-  void onSequenceCompleted() {
+  private void onSequenceCompleted() {
     clearCurrentSequence();
     Log.i(TAG, "Sequence complete, reverting to underlying state " + underlyingState);
     setState(underlyingState, true);

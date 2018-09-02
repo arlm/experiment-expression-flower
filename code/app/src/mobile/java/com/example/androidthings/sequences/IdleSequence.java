@@ -28,10 +28,9 @@ public class IdleSequence extends Sequence {
 
   private static final String TAG = IdleSequence.class.getSimpleName();
   private static final Random random = new Random();
-  private final int[] colors = new int[FlowerLEDController.LED_COUNT];
+  private int color = 0;
   private double openingIncrementPerStep = .0075f;
-  public IdleSequence(Flower flower, float opening, Runnable sequenceCompletedCallback)
-      throws IOException {
+  public IdleSequence(Flower flower, float opening, Runnable sequenceCompletedCallback) {
     super(flower, sequenceCompletedCallback);
   }
 
@@ -54,22 +53,25 @@ public class IdleSequence extends Sequence {
       }
       flower.setOpening(flower.getOpening() + (float) openingIncrementPerStep);
     }
-    generateRainbowVertical(colors, 6, frame);
-    flower.setLEDs(colors);
+    color = generateRainbowVertical(6, frame);
+    flower.setLEDs(color);
     return false;
   }
 
-  private static void generateRainbowVertical(int[] colors, int top, int frame) {
+  private static int generateRainbowVertical(int top, int frame) {
+    int color = 0;
     int numColors = 150;
     float[] hsv0 = {360f * (frame % numColors) / numColors, 1f, 1f};
     float[] hsv1 = {360f * ((frame + 10) % numColors) / numColors, 1f, 1f};
 
     for (int i = 0; i < top; i++) {
-      colors[i] = Color.HSVToColor(0, hsv1);
+      color = Color.HSVToColor(0, hsv1);
     }
 
-    for (int i = top; i < colors.length; i++) {
-      colors[i] = Color.HSVToColor(0, hsv0);
+    for (int i = top; i < 6; i++) {
+      color = Color.HSVToColor(0, hsv0);
     }
+
+    return color;
   }
 }
